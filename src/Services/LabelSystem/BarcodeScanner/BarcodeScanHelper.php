@@ -128,6 +128,18 @@ final class BarcodeScanHelper
     private function parseUserDefinedBarcode(string $input): ?LocalBarcodeScanResult
     {
         $lot_repo = $this->entityManager->getRepository(PartLot::class);
+
+        // Try to JSON parse it
+        try {
+            $data = json_decode($input, true, 512, JSON_THROW_ON_ERROR);
+            // An LCSC part code was found
+            if (isset($data['pc'])) {
+                $input = $data['pc'];
+            }
+        } catch (\JsonException) {
+            //Ignore JSON errors
+        }
+
         //Find only the first result
         $results = $lot_repo->findBy(['user_barcode' => $input], limit: 1);
 
