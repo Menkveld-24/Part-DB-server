@@ -129,16 +129,9 @@ final class BarcodeScanHelper
     {
         $lot_repo = $this->entityManager->getRepository(PartLot::class);
 
-        // Try to JSON parse it
-        try {
-            $data = json_decode($input, true, 512, JSON_THROW_ON_ERROR);
-            // An LCSC part code was found
-            if (isset($data['pc'])) {
-                $input = $data['pc'];
-            }
-        } catch (\JsonException) {
-            //Ignore JSON errors
-            throw new InvalidArgumentException('Could not parse LCSC barcode');
+        // Try to LCSC parse it
+        if (preg_match('/(?:^|,)pc:([^,}]*)/', $input, $m)) {
+            $input = $m[1];
         }
 
         //Find only the first result
