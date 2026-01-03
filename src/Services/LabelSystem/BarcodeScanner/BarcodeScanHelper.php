@@ -138,6 +138,7 @@ final class BarcodeScanHelper
             }
         } catch (\JsonException) {
             //Ignore JSON errors
+            throw new InvalidArgumentException('Could not parse LCSC barcode');
         }
 
         //Find only the first result
